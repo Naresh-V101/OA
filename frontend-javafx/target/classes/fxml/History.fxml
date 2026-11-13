@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.smartkneeoa.frontend.controllers.HistoryController"
+      styleClass="base-pane" prefWidth="1200" prefHeight="750">
+
+    <!-- Sidebar -->
+    <VBox styleClass="sidebar" spacing="0">
+        <VBox styleClass="sidebar-header" spacing="4">
+            <Label text="🦵 SmartKneeOA" styleClass="sidebar-logo-text"/>
+            <Label text="Assessment System" styleClass="sidebar-subtitle"/>
+        </VBox>
+        <VBox spacing="0" style="-fx-padding: 12 0 0 0;" VBox.vgrow="ALWAYS">
+            <Button text="📊  Dashboard"      onAction="#navDashboard"     styleClass="nav-button"/>
+            <Button text="➕  New Assessment" onAction="#navNewAssessment" styleClass="nav-button"/>
+            <Button text="📡  Live Monitor"   onAction="#navLiveMonitor"   styleClass="nav-button"/>
+            <Button text="📋  History"        onAction="#navHistory"       styleClass="nav-button, nav-button-active"/>
+            <Button text="📄  Reports"        onAction="#navReports"       styleClass="nav-button"/>
+            <Button text="👤  Profile"        onAction="#navProfile"       styleClass="nav-button"/>
+            <Button text="⚙️   Settings"      onAction="#navSettings"      styleClass="nav-button"/>
+        </VBox>
+        <VBox style="-fx-padding: 0 0 16 0;">
+            <Separator/>
+            <Button text="🚪  Sign Out" onAction="#logout" styleClass="nav-button" style="-fx-text-fill: #F44336;"/>
+        </VBox>
+    </VBox>
+
+    <!-- Main Content -->
+    <VBox HBox.hgrow="ALWAYS" spacing="0">
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="14">
+            <Label text="Assessment History" styleClass="top-bar-title" HBox.hgrow="ALWAYS"/>
+            <Button text="🔄  Refresh" onAction="#refresh" styleClass="btn-secondary"
+                    style="-fx-padding: 8 16;"/>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+            <VBox spacing="20" style="-fx-padding: 24;">
+
+                <!-- Filter Row -->
+                <HBox styleClass="card" spacing="16" alignment="CENTER_LEFT">
+                    <Label text="Filter by Date:" styleClass="form-label"/>
+                    <DatePicker fx:id="fromDate" promptText="From date"
+                                style="-fx-pref-width: 160px;"/>
+                    <DatePicker fx:id="toDate" promptText="To date"
+                                style="-fx-pref-width: 160px;"/>
+                    <Button text="Apply Filter" onAction="#applyFilter"
+                            styleClass="btn-primary" style="-fx-padding: 9 20;"/>
+                    <Button text="Clear" onAction="#clearFilter"
+                            styleClass="btn-secondary" style="-fx-padding: 9 16;"/>
+                    <Label fx:id="resultCount" text="" styleClass="label-muted"/>
+                </HBox>
+
+                <!-- History Table -->
+                <VBox styleClass="card" spacing="14">
+                    <Label text="All Assessments" styleClass="section-title"/>
+                    <TableView fx:id="historyTable" VBox.vgrow="ALWAYS" prefHeight="400"
+                               styleClass="table-view"
+                               style="-fx-background-color: transparent;">
+                        <columns>
+                            <TableColumn fx:id="colId"     text="#"              prefWidth="60"/>
+                            <TableColumn fx:id="colDate"   text="Date &amp; Time" prefWidth="180"/>
+                            <TableColumn fx:id="colSide"   text="Knee Side"      prefWidth="110"/>
+                            <TableColumn fx:id="colPain"   text="Pain Score"     prefWidth="110"/>
+                            <TableColumn fx:id="colRisk"   text="Risk Category"  prefWidth="140"/>
+                            <TableColumn fx:id="colStatus" text="Status"         prefWidth="110"/>
+                            <TableColumn fx:id="colAction" text="Action"         prefWidth="130"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No assessments found." styleClass="body-text"/>
+                        </placeholder>
+                    </TableView>
+
+                    <!-- Pagination -->
+                    <HBox alignment="CENTER">
+                        <Pagination fx:id="pagination" pageCount="1" maxPageIndicatorCount="5"/>
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT">
+            <Label text="History  |  Smart Knee OA" styleClass="status-text"/>
+        </HBox>
+    </VBox>
+</HBox>

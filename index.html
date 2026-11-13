@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Knee OA - Clinical Assessment & Monitoring System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js for High-performance Medical Telemetry & Probability Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div id="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">🩺</div>
+            <div>
+                <div class="brand-title">SmartKnee OA</div>
+                <div class="brand-sub">Assessment System</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="nav-item active" data-screen="dashboard">
+                <span class="nav-icon">📊</span> Dashboard
+            </a>
+            <a class="nav-item" data-screen="new-assessment">
+                <span class="nav-icon">➕</span> New Assessment
+            </a>
+            <a class="nav-item" data-screen="sensor-monitor">
+                <span class="nav-icon">📡</span> Live Sensors
+            </a>
+            <a class="nav-item" data-screen="assessment-results">
+                <span class="nav-icon">📋</span> Assessment Results
+            </a>
+            <a class="nav-item" data-screen="assessment-history">
+                <span class="nav-icon">📜</span> History
+            </a>
+            <a class="nav-item" data-screen="reports">
+                <span class="nav-icon">📄</span> Reports & Export
+            </a>
+            <a class="nav-item" data-screen="profile">
+                <span class="nav-icon">👤</span> Patient Profile
+            </a>
+            <a class="nav-item" data-screen="settings">
+                <span class="nav-icon">⚙️</span> Settings & Hardware
+            </a>
+        </nav>
+
+        <div class="sidebar-user">
+            <div class="user-info">
+                <span class="user-name" id="sidebar-user-name">Guest User</span>
+                <span class="user-role" id="sidebar-user-role">Research Session</span>
+            </div>
+            <button class="btn-icon-logout" id="btn-logout" title="Log Out">🚪</button>
+        </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Status Bar -->
+        <header class="top-bar">
+            <div class="top-title" id="page-title">Clinical Dashboard</div>
+            <div class="system-status">
+                <div class="status-indicator">
+                    <span class="status-dot" id="dot-backend"></span>
+                    <span>Backend (8080)</span>
+                </div>
+                <div class="status-indicator">
+                    <span class="status-dot" id="dot-ml"></span>
+                    <span>ML Engine (8000)</span>
+                </div>
+                <div class="status-indicator">
+                    <span class="status-dot" id="dot-sensor"></span>
+                    <span id="sensor-status-label">Sensor: Sim</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="content-container">
+            <!-- Medical Disclaimer Banner -->
+            <div class="disclaimer-banner">
+                <span style="font-size: 18px;">⚠️</span>
+                <div>
+                    <strong>Medical & Educational Disclaimer:</strong> This application provides preliminary risk estimation for educational and clinical research purposes only. It is <u>not</u> an approved medical diagnostic device and does not replace evaluation by a qualified orthopedic specialist or physician.
+                </div>
+            </div>
+
+            <!-- SCREEN 1: DASHBOARD -->
+            <section id="screen-dashboard" class="view-screen active">
+                <div class="grid-cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Total Assessments</span>
+                            <span>📁</span>
+                        </div>
+                        <div class="card-value" id="dash-total-count">0</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Latest Risk Result</span>
+                            <span class="card-badge badge-risk-low" id="dash-latest-badge">None</span>
+                        </div>
+                        <div class="card-value" id="dash-latest-category" style="font-size: 22px;">No assessments yet</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Sensor Hardware Status</span>
+                            <span>📡</span>
+                        </div>
+                        <div class="card-value" id="dash-sensor-state" style="font-size: 18px; color: var(--primary);">ESP32 Simulated</div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">MPU6050, Flex, FSR, Vibration</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Active Patient</span>
+                            <span>👤</span>
+                        </div>
+                        <div class="card-value" id="dash-patient-name" style="font-size: 20px;">--</div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;" id="dash-patient-details">Age: -- | Pain: --/10</div>
+                    </div>
+                </div>
+
+                <!-- Recent Assessments Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Recent Clinical Assessments</span>
+                        <button class="btn btn-primary" onclick="navigateTo('new-assessment')">Start Assessment</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="clinical-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date & Time</th>
+                                    <th>Knee Side</th>
+                                    <th>Pain (0-10)</th>
+                                    <th>Status</th>
+                                    <th>Risk Category</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-recent-tbody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">No assessment records found. Click "Start Assessment" to begin.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 2: NEW ASSESSMENT -->
+            <section id="screen-new-assessment" class="view-screen">
+                <div class="grid-cards" style="grid-template-columns: 1fr 1fr;">
+                    <div class="card">
+                        <h3 style="margin-bottom: 16px; color: var(--text-primary);">1. Patient & Symptom Intake</h3>
+                        <div class="form-group">
+                            <label class="form-label">Tested Knee Side *</label>
+                            <select id="assess-knee-side" class="form-control">
+                                <option value="LEFT">Left Knee</option>
+                                <option value="RIGHT">Right Knee</option>
+                                <option value="BOTH">Bilateral (Both Knees)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Self-Reported Pain Score (0 - 10) *</label>
+                            <input type="range" id="assess-pain" min="0" max="10" value="4" class="form-control" oninput="document.getElementById('pain-val').innerText = this.value">
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                                <span>0 (No Pain)</span>
+                                <strong>Selected: <span id="pain-val">4</span>/10</strong>
+                                <span>10 (Severe Pain)</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Observed Symptoms / Joint Crepitus</label>
+                            <textarea id="assess-symptoms" class="form-control" rows="3" placeholder="e.g., Morning stiffness, clicking sound, mild swelling during flexion..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Clinical Notes</label>
+                            <input type="text" id="assess-notes" class="form-control" placeholder="Optional notes for physician review">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 16px; color: var(--text-primary);">2. Guided Movement Protocol</h3>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+                            Instruct patient to perform <strong>5 repeated Knee Flexion-Extension cycles</strong> or a 10-second active gait test while wearing the ESP32 knee fixture.
+                        </p>
+
+                        <div style="background: var(--bg-surface); padding: 20px; border-radius: var(--radius-md); text-align: center; margin-bottom: 20px; border: 1px dashed var(--border);">
+                            <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary);">RECORDING TIMER</div>
+                            <div id="recording-timer" style="font-size: 42px; font-weight: 800; color: var(--primary); margin: 8px 0;">10s</div>
+                            <div id="recording-status-text" style="font-size: 13px; color: var(--text-muted);">Ready to record movement data</div>
+                        </div>
+
+                        <div style="display: flex; gap: 12px;">
+                            <button id="btn-start-recording" class="btn btn-primary" style="flex: 1;" onclick="startAssessmentRecording()">▶ Start Guided Test</button>
+                            <button id="btn-stop-recording" class="btn btn-danger" style="flex: 1;" onclick="stopAssessmentRecording()" disabled>⏹ Cancel / Stop</button>
+                        </div>
+
+                        <div id="stream-progress-box" style="margin-top: 20px; display: none;">
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                                <span>Transmitting sensor samples to backend...</span>
+                                <span id="sample-counter">0 samples</span>
+                            </div>
+                            <div style="height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;">
+                                <div id="sample-progress-bar" style="height: 100%; width: 0%; background: var(--primary); transition: width 0.2s;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 3: LIVE SENSOR MONITORING -->
+            <section id="screen-sensor-monitor" class="view-screen">
+                <div class="grid-cards" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="sensor-metric-box">
+                        <div class="sensor-metric-title">MPU6050 Accel Mag</div>
+                        <div class="sensor-metric-val" id="metric-accel">1.02 g</div>
+                        <div style="font-size: 11px; color: var(--text-muted);" id="metric-accel-xyz">X: 0.12 | Y: 0.05 | Z: 1.01</div>
+                    </div>
+                    <div class="sensor-metric-box">
+                        <div class="sensor-metric-title">MPU6050 Gyro Mag</div>
+                        <div class="sensor-metric-val" id="metric-gyro">24.5 °/s</div>
+                        <div style="font-size: 11px; color: var(--text-muted);" id="metric-gyro-xyz">X: 5.2 | Y: 23.4 | Z: 4.1</div>
+                    </div>
+                    <div class="sensor-metric-box">
+                        <div class="sensor-metric-title">Flex Sensor Angle</div>
+                        <div class="sensor-metric-val" id="metric-flex">68°</div>
+                        <div style="font-size: 11px; color: var(--text-muted);" id="metric-flex-raw">ADC: 2150 / 4095</div>
+                    </div>
+                    <div class="sensor-metric-box">
+                        <div class="sensor-metric-title">FSR Contact / Vib</div>
+                        <div class="sensor-metric-val" id="metric-fsr">1820 N/adc</div>
+                        <div style="font-size: 11px; color: var(--text-muted);" id="metric-vib-state">Vib Pulses: 0</div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-header">
+                        <span class="card-title">Real-Time Acceleration & Flexion Waves</span>
+                        <div>
+                            <button class="btn btn-secondary" onclick="toggleTelemetryStream()" id="btn-toggle-telemetry">Pause Live Stream</button>
+                        </div>
+                    </div>
+                    <div style="height: 320px;">
+                        <canvas id="live-sensor-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 4: ASSESSMENT RESULTS -->
+            <section id="screen-assessment-results" class="view-screen">
+                <div class="grid-cards" style="grid-template-columns: 1fr 2fr;">
+                    <div class="card" style="text-align: center;">
+                        <div class="card-title" style="margin-bottom: 12px;">Preliminary Risk Category</div>
+                        <div id="result-badge-display" class="card-badge badge-risk-low" style="font-size: 24px; padding: 12px 24px; display: inline-block; margin-bottom: 12px;">
+                            LOW RISK
+                        </div>
+                        <p id="result-summary-text" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+                            Kinematic features show smooth joint trajectory with standard range of motion.
+                        </p>
+                        <hr style="border: 0; border-top: 1px solid var(--border); margin: 16px 0;">
+                        <div style="font-size: 12px; color: var(--text-muted); text-align: left;">
+                            <div><strong>Assessment ID:</strong> <span id="res-id">--</span></div>
+                            <div><strong>Model Version:</strong> <span id="res-model-ver">RF-v1.0.0-Synthetic</span></div>
+                            <div><strong>Date:</strong> <span id="res-date">--</span></div>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="navigateTo('reports')">Generate Full PDF Report</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title" style="margin-bottom: 16px;">Machine Learning Class Probabilities</div>
+                        <div style="height: 220px;">
+                            <canvas id="result-prob-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title" style="margin-bottom: 16px;">Sensor Biomechanical Feature Summary</div>
+                    <div class="table-wrapper">
+                        <table class="clinical-table">
+                            <thead>
+                                <tr>
+                                    <th>Feature Name</th>
+                                    <th>Observed Value</th>
+                                    <th>Reference Range</th>
+                                    <th>Clinical Indication</th>
+                                </tr>
+                            </thead>
+                            <tbody id="result-features-tbody">
+                                <tr>
+                                    <td><strong>Mean Accel Magnitude</strong></td>
+                                    <td id="feat-accel-mag">--</td>
+                                    <td>0.90 - 1.15 g</td>
+                                    <td>Normal gravitational alignment</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Movement Variability (Gyro Std)</strong></td>
+                                    <td id="feat-gyro-std">--</td>
+                                    <td>10.0 - 45.0 °/s</td>
+                                    <td>Gait & flexion smoothness</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Flex Sensor Range (ROM)</strong></td>
+                                    <td id="feat-flex-rom">--</td>
+                                    <td>50° - 110°</td>
+                                    <td>Knee joint flexion capacity</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Crepitus / Vibration Events</strong></td>
+                                    <td id="feat-vib-count">--</td>
+                                    <td>0 - 2 pulses</td>
+                                    <td>Acoustic/mechanical vibration indication</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 5: ASSESSMENT HISTORY -->
+            <section id="screen-assessment-history" class="view-screen">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Patient Assessment History</span>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="history-search" class="form-control" style="width: 220px;" placeholder="Search by knee or status..." oninput="filterHistoryTable()">
+                            <button class="btn btn-secondary" onclick="loadAssessmentHistory()">🔄 Refresh</button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="clinical-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date</th>
+                                    <th>Knee</th>
+                                    <th>Pain Score</th>
+                                    <th>Status</th>
+                                    <th>Risk Category</th>
+                                    <th>Model Score</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 6: REPORTS & EXPORT -->
+            <section id="screen-reports" class="view-screen">
+                <div class="card" id="printable-report-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--border); padding-bottom: 20px; margin-bottom: 20px;">
+                        <div>
+                            <h2 style="color: var(--primary-dark); font-size: 22px;">Smart Knee OA Assessment Report</h2>
+                            <p style="font-size: 13px; color: var(--text-muted);">Preliminary Educational & Clinical Research Report</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save as PDF</button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+                        <div style="background: var(--bg-surface); padding: 16px; border-radius: var(--radius-md);">
+                            <h4 style="color: var(--text-primary); margin-bottom: 8px;">Patient Profile</h4>
+                            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
+                                <div><strong>Name:</strong> <span id="rep-name">--</span></div>
+                                <div><strong>Age / Gender:</strong> <span id="rep-age-gender">--</span></div>
+                                <div><strong>Height / Weight:</strong> <span id="rep-height-weight">--</span></div>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-surface); padding: 16px; border-radius: var(--radius-md);">
+                            <h4 style="color: var(--text-primary); margin-bottom: 8px;">Assessment Parameters</h4>
+                            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
+                                <div><strong>Knee Evaluated:</strong> <span id="rep-knee">--</span></div>
+                                <div><strong>Reported Pain Score:</strong> <span id="rep-pain">--</span>/10</div>
+                                <div><strong>Evaluation Date:</strong> <span id="rep-date">--</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--primary-light); border: 1px solid var(--primary); padding: 20px; border-radius: var(--radius-md); margin-bottom: 24px;">
+                        <h4 style="color: var(--primary-dark); margin-bottom: 6px;">Evaluation Outcome</h4>
+                        <div style="font-size: 24px; font-weight: 800; color: var(--primary-dark);" id="rep-risk-title">LOW RISK ESTIMATE</div>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin-top: 6px;" id="rep-guidance">
+                            General Educational Guidance: Continue low-impact physical exercise (such as swimming, stationary cycling, or gentle quadriceps strengthening). Maintain optimal hydration and healthy body weight. Consult an orthopedic specialist if joint pain or stiffness persists.
+                        </p>
+                    </div>
+
+                    <div class="disclaimer-banner" style="margin-bottom: 0;">
+                        <span>⚖️</span>
+                        <div style="font-size: 12px;">
+                            <strong>Ethical Compliance Statement:</strong> This evaluation utilizes an automated Random Forest Classifier trained on synthetic biomechanical data for educational purposes. It does NOT constitute medical diagnosis, clinical prognosis, or clinical validation.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 7: PATIENT PROFILE -->
+            <section id="screen-profile" class="view-screen">
+                <div class="card" style="max-width: 680px;">
+                    <h3 style="margin-bottom: 20px; color: var(--text-primary);">Patient Clinical Profile</h3>
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="prof-name" class="form-control">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label">Age</label>
+                            <input type="number" id="prof-age" class="form-control" min="1" max="120">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gender</label>
+                            <select id="prof-gender" class="form-control">
+                                <option value="MALE">Male</option>
+                                <option value="FEMALE">Female</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label">Height (cm)</label>
+                            <input type="number" id="prof-height" class="form-control" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Weight (kg)</label>
+                            <input type="number" id="prof-weight" class="form-control" step="0.1">
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button class="btn btn-primary" onclick="saveUserProfile()">Save Profile Information</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 8: SETTINGS & HARDWARE -->
+            <section id="screen-settings" class="view-screen">
+                <div class="grid-cards" style="grid-template-columns: 1fr 1fr;">
+                    <div class="card">
+                        <h3 style="margin-bottom: 16px; color: var(--text-primary);">Service Endpoints & Diagnostics</h3>
+                        <div class="form-group">
+                            <label class="form-label">Spring Boot Backend URL</label>
+                            <input type="text" id="cfg-backend-url" class="form-control" value="http://localhost:8080">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Python ML Service URL</label>
+                            <input type="text" id="cfg-ml-url" class="form-control" value="http://localhost:8000">
+                        </div>
+                        <button class="btn btn-secondary" onclick="runConnectionDiagnostics()">🔍 Run Diagnostics Test</button>
+                        <div id="diag-results" style="margin-top: 16px; font-size: 13px;"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 16px; color: var(--text-primary);">ESP32 Sensor Hardware Integration</h3>
+                        <div class="form-group">
+                            <label class="form-label">Sensor Input Mode</label>
+                            <select id="cfg-sensor-mode" class="form-control" onchange="toggleSensorMode(this.value)">
+                                <option value="SIMULATED">Built-in Biomechanical Simulator</option>
+                                <option value="BLE">Wireless BLE (ESP32 DevKit V1 via Bluetooth)</option>
+                                <option value="SERIAL">USB Cable (ESP32 COM Port via Web Serial)</option>
+                            </select>
+                        </div>
+                        <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-md); font-size: 12px; margin-bottom: 16px; border: 1px solid var(--border);">
+                            <strong>📌 Sensor Pinout Reference:</strong><br>
+                            • MPU6050: <code>SDA ➔ GPIO 21</code>, <code>SCL ➔ GPIO 22</code><br>
+                            • Flex Sensor: <code>V-Divider Output ➔ GPIO 34</code> (ADC1)<br>
+                            • FSR Sensor: <code>V-Divider Output ➔ GPIO 35</code> (ADC1)<br>
+                            • SW-420 Vibration: <code>Digital Output DO ➔ GPIO 32</code><br>
+                            • Power: <code>3.3V</code> & <code>GND</code>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn btn-primary" id="btn-ble-connect" onclick="connectWebBluetooth()" disabled style="flex: 1;">🔗 Connect via BLE</button>
+                            <button class="btn btn-secondary" id="btn-serial-connect" onclick="connectWebSerial()" disabled style="flex: 1;">🔌 Connect via USB Serial</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<!-- AUTH MODAL (Login & Register) -->
+<div id="auth-modal" class="auth-container" style="display: none;">
+    <div class="auth-card">
+        <!-- LOGIN VIEW -->
+        <div id="auth-login-view">
+            <h2 style="color: var(--primary-dark); font-size: 24px; margin-bottom: 6px;">Sign In</h2>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 24px;">Smart Knee OA Assessment System</p>
+            
+            <div id="login-error" style="color: var(--risk-high); font-size: 13px; margin-bottom: 12px; display: none;"></div>
+
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="login-email" class="form-control" value="testuser@demo.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="login-password" class="form-control" value="Demo@12345">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="handleLogin()">Sign In</button>
+            <div style="margin-top: 20px; font-size: 13px; text-align: center; color: var(--text-muted);">
+                Don't have an account? <a href="#" style="color: var(--primary); font-weight: 600;" onclick="switchAuthMode('register')">Register here</a>
+            </div>
+        </div>
+
+        <!-- REGISTER VIEW -->
+        <div id="auth-register-view" style="display: none;">
+            <h2 style="color: var(--primary-dark); font-size: 24px; margin-bottom: 6px;">Create Account</h2>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Patient & Researcher Registration</p>
+            
+            <div id="register-error" style="color: var(--risk-high); font-size: 13px; margin-bottom: 12px; display: none;"></div>
+
+            <div class="form-group">
+                <label class="form-label">Full Name *</label>
+                <input type="text" id="reg-name" class="form-control" placeholder="Dr. Sarah Connor">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address *</label>
+                <input type="email" id="reg-email" class="form-control" placeholder="user@clinic.org">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password * (min 8 characters)</label>
+                <input type="password" id="reg-password" class="form-control" placeholder="StrongPassword@123">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-group">
+                    <label class="form-label">Age</label>
+                    <input type="number" id="reg-age" class="form-control" value="52">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Gender</label>
+                    <select id="reg-gender" class="form-control">
+                        <option value="FEMALE">Female</option>
+                        <option value="MALE">Male</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="handleRegister()">Register Account</button>
+            <div style="margin-top: 20px; font-size: 13px; text-align: center; color: var(--text-muted);">
+                Already registered? <a href="#" style="color: var(--primary); font-weight: 600;" onclick="switchAuthMode('login')">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
+

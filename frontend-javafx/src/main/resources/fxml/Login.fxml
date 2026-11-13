@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.smartkneeoa.frontend.controllers.LoginController"
+           styleClass="auth-container"
+           prefWidth="480" prefHeight="600">
+
+    <VBox alignment="CENTER" spacing="0">
+        <!-- Gradient background accent -->
+        <VBox styleClass="auth-card" alignment="TOP_CENTER" spacing="0">
+
+            <!-- Logo -->
+            <VBox alignment="CENTER" spacing="6" style="-fx-padding: 0 0 30 0;">
+                <Label text="🦵 SmartKneeOA" styleClass="auth-logo"/>
+                <Label text="Intelligent Knee Assessment System" styleClass="auth-tagline"/>
+            </VBox>
+
+            <!-- Tab switcher -->
+            <HBox spacing="0" style="-fx-padding: 0 0 28 0;" alignment="CENTER">
+                <Button fx:id="tabLoginBtn"   text="Login"    onAction="#switchToLogin"
+                        styleClass="btn-primary"
+                        style="-fx-pref-width: 160px; -fx-background-radius: 8 0 0 8;"/>
+                <Button fx:id="tabRegisterBtn" text="Register" onAction="#switchToRegister"
+                        styleClass="btn-secondary"
+                        style="-fx-pref-width: 160px; -fx-background-radius: 0 8 8 0;"/>
+            </HBox>
+
+            <!-- ─── Login Form ─── -->
+            <VBox fx:id="loginForm" spacing="16" visible="true" managed="true">
+                <VBox spacing="6">
+                    <Label text="Email" styleClass="form-label"/>
+                    <TextField fx:id="loginEmail" promptText="your@email.com"
+                               styleClass="text-field"/>
+                </VBox>
+                <VBox spacing="6">
+                    <Label text="Password" styleClass="form-label"/>
+                    <PasswordField fx:id="loginPassword" promptText="••••••••"
+                                   styleClass="password-field"/>
+                </VBox>
+                <Label fx:id="loginError" text="" style="-fx-text-fill: #F44336; -fx-font-size: 12px;"/>
+                <Button text="Sign In" onAction="#login" styleClass="btn-primary"
+                        style="-fx-pref-width: 340px; -fx-padding: 14 0 14 0;"/>
+            </VBox>
+
+            <!-- ─── Register Form ─── -->
+            <VBox fx:id="registerForm" spacing="14" visible="false" managed="false">
+                <HBox spacing="12">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Full Name" styleClass="form-label"/>
+                        <TextField fx:id="regName" promptText="John Doe" styleClass="text-field"/>
+                    </VBox>
+                </HBox>
+                <VBox spacing="4">
+                    <Label text="Email" styleClass="form-label"/>
+                    <TextField fx:id="regEmail" promptText="your@email.com" styleClass="text-field"/>
+                </VBox>
+                <VBox spacing="4">
+                    <Label text="Password" styleClass="form-label"/>
+                    <PasswordField fx:id="regPassword" promptText="Min. 8 characters" styleClass="password-field"/>
+                </VBox>
+                <HBox spacing="12">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Age" styleClass="form-label"/>
+                        <TextField fx:id="regAge" promptText="e.g. 55" styleClass="text-field"/>
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Gender" styleClass="form-label"/>
+                        <ComboBox fx:id="regGender" promptText="Select"
+                                  style="-fx-pref-width: 140px;" styleClass="combo-box"/>
+                    </VBox>
+                </HBox>
+                <Label fx:id="regError" text="" style="-fx-text-fill: #F44336; -fx-font-size: 12px;"/>
+                <Button text="Create Account" onAction="#register" styleClass="btn-primary"
+                        style="-fx-pref-width: 340px; -fx-padding: 14 0 14 0;"/>
+            </VBox>
+
+        </VBox>
+    </VBox>
+</StackPane>

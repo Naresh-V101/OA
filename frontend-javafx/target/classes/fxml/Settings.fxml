@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.smartkneeoa.frontend.controllers.SettingsController"
+      styleClass="base-pane" prefWidth="1200" prefHeight="750">
+
+    <VBox styleClass="sidebar" spacing="0">
+        <VBox styleClass="sidebar-header" spacing="4">
+            <Label text="🦵 SmartKneeOA" styleClass="sidebar-logo-text"/>
+            <Label text="Assessment System" styleClass="sidebar-subtitle"/>
+        </VBox>
+        <VBox spacing="0" style="-fx-padding: 12 0 0 0;" VBox.vgrow="ALWAYS">
+            <Button text="📊  Dashboard"      onAction="#navDashboard"     styleClass="nav-button"/>
+            <Button text="➕  New Assessment" onAction="#navNewAssessment" styleClass="nav-button"/>
+            <Button text="📡  Live Monitor"   onAction="#navLiveMonitor"   styleClass="nav-button"/>
+            <Button text="📋  History"        onAction="#navHistory"       styleClass="nav-button"/>
+            <Button text="📄  Reports"        onAction="#navReports"       styleClass="nav-button"/>
+            <Button text="👤  Profile"        onAction="#navProfile"       styleClass="nav-button"/>
+            <Button text="⚙️   Settings"      onAction="#navSettings"      styleClass="nav-button, nav-button-active"/>
+        </VBox>
+        <VBox style="-fx-padding: 0 0 16 0;">
+            <Separator/>
+            <Button text="🚪  Sign Out" onAction="#logout" styleClass="nav-button" style="-fx-text-fill: #F44336;"/>
+        </VBox>
+    </VBox>
+
+    <VBox HBox.hgrow="ALWAYS" spacing="0">
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT">
+            <Label text="Settings" styleClass="top-bar-title"/>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+            <VBox spacing="20" style="-fx-padding: 28; -fx-max-width: 750;">
+
+                <!-- API Settings -->
+                <VBox styleClass="card" spacing="16">
+                    <Label text="Backend API Connection" styleClass="section-title"/>
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Spring Boot API URL" styleClass="form-label"/>
+                            <TextField fx:id="apiUrlField" styleClass="text-field"
+                                       promptText="http://localhost:8080"/>
+                        </VBox>
+                        <Button text="Test Connection" onAction="#testApiConnection"
+                                styleClass="btn-secondary" style="-fx-padding: 10 18;
+                                -fx-translate-y: 12px;"/>
+                    </HBox>
+                    <Label fx:id="apiStatus" text="" styleClass="body-text"/>
+                </VBox>
+
+                <!-- ML Service Settings -->
+                <VBox styleClass="card" spacing="16">
+                    <Label text="ML Service Connection" styleClass="section-title"/>
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Python FastAPI ML URL" styleClass="form-label"/>
+                            <TextField fx:id="mlUrlField" styleClass="text-field"
+                                       promptText="http://localhost:8000"/>
+                        </VBox>
+                        <Button text="Test Connection" onAction="#testMlConnection"
+                                styleClass="btn-secondary" style="-fx-padding: 10 18;
+                                -fx-translate-y: 12px;"/>
+                    </HBox>
+                    <Label fx:id="mlStatus" text="" styleClass="body-text"/>
+                    <Label fx:id="mlModelVersion" text="" styleClass="label-muted"/>
+                </VBox>
+
+                <!-- BLE Settings -->
+                <VBox styleClass="card" spacing="16">
+                    <Label text="Sensor (BLE) Settings" styleClass="section-title"/>
+                    <CheckBox fx:id="simModeCheck" text="Use Simulation Mode (no physical hardware required)"
+                              style="-fx-text-fill: #E8F0F7;"/>
+                    <Label text="When enabled, the system generates realistic synthetic sensor readings for demonstration."
+                           styleClass="body-text" wrapText="true"/>
+                    <HBox spacing="6">
+                        <Label text="BLE Device Name:" styleClass="form-label"/>
+                        <Label text="SmartKneeOA" styleClass="label-primary"/>
+                    </HBox>
+                    <HBox spacing="6">
+                        <Label text="Service UUID:" styleClass="form-label"/>
+                        <Label text="4FAFC201-1FB5-459E-8FCC-C5C9C331914B"
+                               styleClass="label-muted" style="-fx-font-size: 11px;"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Collection Settings -->
+                <VBox styleClass="card" spacing="16">
+                    <Label text="Assessment Collection Settings" styleClass="section-title"/>
+                    <HBox spacing="20">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Collection Duration (seconds)" styleClass="form-label"/>
+                            <Spinner fx:id="durationSpinner" min="10" max="120"
+                                     initialValue="30" editable="true"
+                                     styleClass="text-field"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Report Output Directory" styleClass="form-label"/>
+                            <HBox spacing="8">
+                                <TextField fx:id="reportDirField" styleClass="text-field"
+                                           HBox.hgrow="ALWAYS" promptText="./reports"/>
+                                <Button text="Browse" onAction="#browseReportDir"
+                                        styleClass="btn-secondary" style="-fx-padding: 9 14;"/>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <HBox spacing="14">
+                    <Button text="💾  Save Settings" onAction="#saveSettings"
+                            styleClass="btn-primary" style="-fx-padding: 12 28;"/>
+                    <Button text="Reset to Defaults" onAction="#resetDefaults"
+                            styleClass="btn-secondary" style="-fx-padding: 12 20;"/>
+                </HBox>
+                <Label fx:id="settingsMessage" text="" styleClass="body-text"/>
+
+                <!-- App Info -->
+                <VBox styleClass="card" spacing="8">
+                    <Label text="About" styleClass="section-title"/>
+                    <Label text="Smart Knee OA Assessment System  v1.0.0" styleClass="label-primary"/>
+                    <Label text="College Project – Preliminary OA Risk Assessment" styleClass="body-text"/>
+                    <Label text="Stack: JavaFX 21 | Spring Boot 3 | Python FastAPI | ESP32 BLE | Random Forest" styleClass="label-muted"/>
+                    <Separator style="-fx-padding: 4 0;"/>
+                    <Label text="⚠️  This system is for EDUCATIONAL / DEMONSTRATION use only." style="-fx-text-fill: #FF9800; -fx-font-size: 12px;"/>
+                    <Label text="It is NOT clinically validated and must NOT be used for medical diagnosis." styleClass="label-muted"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT">
+            <Label text="Settings  |  Smart Knee OA" styleClass="status-text"/>
+        </HBox>
+    </VBox>
+</HBox>

@@ -1,0 +1,37 @@
+{
+  "model_version": "1.0.0-demo",
+  "algorithm": "RandomForestClassifier",
+  "features": [
+    "accel_mean_x",
+    "accel_mean_y",
+    "accel_mean_z",
+    "accel_std_x",
+    "accel_std_y",
+    "accel_std_z",
+    "accel_magnitude_mean",
+    "gyro_mean_x",
+    "gyro_mean_y",
+    "gyro_mean_z",
+    "gyro_std_x",
+    "gyro_std_y",
+    "gyro_std_z",
+    "gyro_magnitude_mean",
+    "flex_mean",
+    "flex_std",
+    "fsr_mean",
+    "fsr_std",
+    "vibration_event_count",
+    "pain_score",
+    "age"
+  ],
+  "labels": [
+    "LOW",
+    "MODERATE",
+    "HIGH"
+  ],
+  "is_demo": true,
+  "disclaimer": "This model is trained on SYNTHETIC data for demonstration purposes only. It is NOT clinically validated and must NOT be used for medical diagnosis.",
+  "n_samples": 1500,
+  "cv_f1_mean": 1.0,
+  "cv_f1_std": 0.0
+}

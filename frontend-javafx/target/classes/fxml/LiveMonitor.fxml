@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.smartkneeoa.frontend.controllers.LiveMonitorController"
+      styleClass="base-pane" prefWidth="1200" prefHeight="750">
+
+    <!-- Sidebar -->
+    <VBox styleClass="sidebar" spacing="0">
+        <VBox styleClass="sidebar-header" spacing="4">
+            <Label text="🦵 SmartKneeOA" styleClass="sidebar-logo-text"/>
+            <Label text="Assessment System" styleClass="sidebar-subtitle"/>
+        </VBox>
+        <VBox spacing="0" style="-fx-padding: 12 0 0 0;" VBox.vgrow="ALWAYS">
+            <Button text="📊  Dashboard"       onAction="#navDashboard"    styleClass="nav-button"/>
+            <Button text="➕  New Assessment"  onAction="#navNewAssessment" styleClass="nav-button"/>
+            <Button text="📡  Live Monitor"    onAction="#navLiveMonitor"  styleClass="nav-button, nav-button-active"/>
+            <Button text="📋  History"         onAction="#navHistory"       styleClass="nav-button"/>
+            <Button text="📄  Reports"         onAction="#navReports"       styleClass="nav-button"/>
+            <Button text="👤  Profile"         onAction="#navProfile"       styleClass="nav-button"/>
+            <Button text="⚙️   Settings"       onAction="#navSettings"      styleClass="nav-button"/>
+        </VBox>
+        <VBox style="-fx-padding: 16;" spacing="6">
+            <Label text="BLE CONNECTION" styleClass="label-muted"/>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Circle fx:id="bleStatusDot" radius="5" styleClass="sensor-dot-offline"/>
+                <Label fx:id="bleStatusLabel" text="Disconnected" styleClass="label-primary"/>
+            </HBox>
+            <Button fx:id="connectBtn" text="Connect Device" onAction="#toggleConnection"
+                    styleClass="btn-primary" style="-fx-padding: 8 14; -fx-font-size: 12px;"/>
+            <CheckBox fx:id="simModeCheck" text="Simulation Mode"
+                      style="-fx-text-fill: #8BAFC9; -fx-font-size: 12px;" selected="true"/>
+        </VBox>
+        <VBox style="-fx-padding: 0 0 16 0;">
+            <Separator/>
+            <Button text="🚪  Sign Out" onAction="#logout" styleClass="nav-button"
+                    style="-fx-text-fill: #F44336;"/>
+        </VBox>
+    </VBox>
+
+    <!-- Main Content -->
+    <VBox HBox.hgrow="ALWAYS" spacing="0">
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="12">
+            <Label text="Live Sensor Monitor" styleClass="top-bar-title" HBox.hgrow="ALWAYS"/>
+            <Label fx:id="sampleCountLabel" text="Samples: 0" styleClass="body-text"/>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+            <VBox spacing="20" style="-fx-padding: 24;">
+
+                <!-- Sensor status row -->
+                <HBox spacing="14">
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="4">
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Circle fx:id="mpuDot" radius="5" styleClass="sensor-dot-offline"/>
+                            <Label text="MPU6050" styleClass="card-title"/>
+                        </HBox>
+                        <Label fx:id="mpuStatus" text="Not Connected" styleClass="label-primary"/>
+                    </VBox>
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="4">
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Circle fx:id="flexDot" radius="5" styleClass="sensor-dot-offline"/>
+                            <Label text="Flex Sensor" styleClass="card-title"/>
+                        </HBox>
+                        <Label fx:id="flexStatus" text="Not Connected" styleClass="label-primary"/>
+                    </VBox>
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="4">
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Circle fx:id="fsrDot" radius="5" styleClass="sensor-dot-offline"/>
+                            <Label text="FSR Sensor" styleClass="card-title"/>
+                        </HBox>
+                        <Label fx:id="fsrStatus" text="Not Connected" styleClass="label-primary"/>
+                    </VBox>
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="4">
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Circle fx:id="vibDot" radius="5" styleClass="sensor-dot-offline"/>
+                            <Label text="Vibration" styleClass="card-title"/>
+                        </HBox>
+                        <Label fx:id="vibStatus" text="Not Connected" styleClass="label-primary"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Live Readings -->
+                <HBox spacing="14">
+                    <!-- Accelerometer -->
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="10">
+                        <Label text="Accelerometer (m/s²)" styleClass="section-title"/>
+                        <HBox spacing="20">
+                            <VBox spacing="4">
+                                <Label text="X" styleClass="label-muted"/>
+                                <Label fx:id="accelX" text="0.0000" styleClass="card-value" style="-fx-font-size: 20px; -fx-text-fill: #00BFA5;"/>
+                            </VBox>
+                            <VBox spacing="4">
+                                <Label text="Y" styleClass="label-muted"/>
+                                <Label fx:id="accelY" text="0.0000" styleClass="card-value" style="-fx-font-size: 20px; -fx-text-fill: #2196F3;"/>
+                            </VBox>
+                            <VBox spacing="4">
+                                <Label text="Z" styleClass="label-muted"/>
+                                <Label fx:id="accelZ" text="0.0000" styleClass="card-value" style="-fx-font-size: 20px; -fx-text-fill: #FF9800;"/>
+                            </VBox>
+                        </HBox>
+                        <!-- Accel chart -->
+                        <LineChart fx:id="accelChart" prefHeight="140" animated="false"
+                                   styleClass="chart" style="-fx-padding: 0;">
+                            <xAxis><NumberAxis label="Sample" tickLabelsVisible="false" tickMarkVisible="false" minorTickVisible="false"/></xAxis>
+                            <yAxis><NumberAxis label="m/s²"/></yAxis>
+                        </LineChart>
+                    </VBox>
+
+                    <!-- Gyroscope -->
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="10">
+                        <Label text="Gyroscope (°/s)" styleClass="section-title"/>
+                        <HBox spacing="20">
+                            <VBox spacing="4">
+                                <Label text="X" styleClass="label-muted"/>
+                                <Label fx:id="gyroX" text="0.0000" styleClass="card-value" style="-fx-font-size: 20px; -fx-text-fill: #00BFA5;"/>
+                            </VBox>
+                            <VBox spacing="4">
+                                <Label text="Y" styleClass="label-muted"/>
+                                <Label fx:id="gyroY" text="0.0000" styleClass="card-value" style="-fx-font-size: 20px; -fx-text-fill: #2196F3;"/>
+                            </VBox>
+                            <VBox spacing="4">
+                                <Label text="Z" styleClass="label-muted"/>
+                                <Label fx:id="gyroZ" text="0.0000" styleClass="card-value" style="-fx-font-size: 20px; -fx-text-fill: #FF9800;"/>
+                            </VBox>
+                        </HBox>
+                        <LineChart fx:id="gyroChart" prefHeight="140" animated="false"
+                                   styleClass="chart" style="-fx-padding: 0;">
+                            <xAxis><NumberAxis label="Sample" tickLabelsVisible="false" tickMarkVisible="false" minorTickVisible="false"/></xAxis>
+                            <yAxis><NumberAxis label="°/s"/></yAxis>
+                        </LineChart>
+                    </VBox>
+                </HBox>
+
+                <!-- Flex / FSR / Vibration -->
+                <HBox spacing="14">
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="10">
+                        <Label text="Flex Sensor (ADC)" styleClass="section-title"/>
+                        <Label fx:id="flexValue" text="0" styleClass="card-value" style="-fx-text-fill: #4CAF50;"/>
+                        <ProgressBar fx:id="flexBar" progress="0" prefWidth="300" prefHeight="10"/>
+                        <Label text="Range: 0 – 4095" styleClass="label-muted"/>
+                    </VBox>
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="10">
+                        <Label text="FSR Sensor (ADC)" styleClass="section-title"/>
+                        <Label fx:id="fsrValue" text="0" styleClass="card-value" style="-fx-text-fill: #9C27B0;"/>
+                        <ProgressBar fx:id="fsrBar" progress="0" prefWidth="300" prefHeight="10"/>
+                        <Label text="Range: 0 – 4095" styleClass="label-muted"/>
+                    </VBox>
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="10">
+                        <Label text="Vibration Events" styleClass="section-title"/>
+                        <Label fx:id="vibCount" text="0" styleClass="card-value" style="-fx-text-fill: #F44336;"/>
+                        <Label fx:id="vibState" text="State: No event" styleClass="body-text"/>
+                    </VBox>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="20">
+            <Label text="Smart Knee OA  |  Live Monitor"  styleClass="status-text"/>
+            <Label text="⚠️ Demonstration / Educational Use Only" style="-fx-text-fill: #FF9800; -fx-font-size: 11px;"/>
+        </HBox>
+    </VBox>
+</HBox>

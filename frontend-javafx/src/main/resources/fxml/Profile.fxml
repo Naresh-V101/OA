@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.smartkneeoa.frontend.controllers.ProfileController"
+      styleClass="base-pane" prefWidth="1200" prefHeight="750">
+
+    <!-- Sidebar -->
+    <VBox styleClass="sidebar" spacing="0">
+        <VBox styleClass="sidebar-header" spacing="4">
+            <Label text="🦵 SmartKneeOA" styleClass="sidebar-logo-text"/>
+            <Label text="Assessment System" styleClass="sidebar-subtitle"/>
+        </VBox>
+        <VBox spacing="0" style="-fx-padding: 12 0 0 0;" VBox.vgrow="ALWAYS">
+            <Button text="📊  Dashboard"      onAction="#navDashboard"     styleClass="nav-button"/>
+            <Button text="➕  New Assessment" onAction="#navNewAssessment" styleClass="nav-button"/>
+            <Button text="📡  Live Monitor"   onAction="#navLiveMonitor"   styleClass="nav-button"/>
+            <Button text="📋  History"        onAction="#navHistory"       styleClass="nav-button"/>
+            <Button text="📄  Reports"        onAction="#navReports"       styleClass="nav-button"/>
+            <Button text="👤  Profile"        onAction="#navProfile"       styleClass="nav-button, nav-button-active"/>
+            <Button text="⚙️   Settings"      onAction="#navSettings"      styleClass="nav-button"/>
+        </VBox>
+        <VBox style="-fx-padding: 0 0 16 0;">
+            <Separator/>
+            <Button text="🚪  Sign Out" onAction="#logout" styleClass="nav-button" style="-fx-text-fill: #F44336;"/>
+        </VBox>
+    </VBox>
+
+    <!-- Main Content -->
+    <VBox HBox.hgrow="ALWAYS" spacing="0">
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT">
+            <Label text="User Profile" styleClass="top-bar-title" HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+            <VBox spacing="24" style="-fx-padding: 28; -fx-max-width: 800;">
+
+                <!-- Avatar + Name -->
+                <HBox styleClass="card" spacing="24" alignment="CENTER_LEFT">
+                    <Label text="👤" style="-fx-font-size: 56px;"/>
+                    <VBox spacing="4">
+                        <Label fx:id="displayName" text="—" styleClass="page-title"/>
+                        <Label fx:id="displayEmail" text="—" styleClass="body-text"/>
+                        <Label fx:id="displayRole"  text="USER" styleClass="label-muted"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Edit Profile Form -->
+                <VBox styleClass="card" spacing="18">
+                    <Label text="Personal Information" styleClass="section-title"/>
+
+                    <HBox spacing="20">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Full Name" styleClass="form-label"/>
+                            <TextField fx:id="nameField" styleClass="text-field"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Age" styleClass="form-label"/>
+                            <TextField fx:id="ageField" promptText="e.g. 55" styleClass="text-field"/>
+                        </VBox>
+                    </HBox>
+
+                    <HBox spacing="20">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Gender" styleClass="form-label"/>
+                            <ComboBox fx:id="genderCombo" styleClass="combo-box"
+                                      style="-fx-pref-width: 100000px;"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Height (cm)" styleClass="form-label"/>
+                            <TextField fx:id="heightField" promptText="e.g. 170" styleClass="text-field"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Weight (kg)" styleClass="form-label"/>
+                            <TextField fx:id="weightField" promptText="e.g. 70" styleClass="text-field"/>
+                        </VBox>
+                    </HBox>
+
+                    <HBox spacing="12">
+                        <Button text="💾  Save Changes" onAction="#saveProfile"
+                                styleClass="btn-primary" style="-fx-padding: 12 28;"/>
+                        <Button text="Reset" onAction="#loadProfile"
+                                styleClass="btn-secondary" style="-fx-padding: 12 20;"/>
+                    </HBox>
+
+                    <Label fx:id="profileMessage" text="" styleClass="body-text"/>
+                </VBox>
+
+                <!-- Stats Summary -->
+                <HBox styleClass="card" spacing="40" alignment="CENTER">
+                    <VBox alignment="CENTER" spacing="4">
+                        <Label fx:id="statAssessments" text="0" styleClass="card-value"
+                               style="-fx-text-fill: #00BFA5;"/>
+                        <Label text="Assessments" styleClass="label-muted"/>
+                    </VBox>
+                    <Separator orientation="VERTICAL" prefHeight="60"/>
+                    <VBox alignment="CENTER" spacing="4">
+                        <Label fx:id="statLastRisk" text="—" styleClass="card-value"
+                               style="-fx-font-size: 20px;"/>
+                        <Label text="Last Risk Level" styleClass="label-muted"/>
+                    </VBox>
+                    <Separator orientation="VERTICAL" prefHeight="60"/>
+                    <VBox alignment="CENTER" spacing="4">
+                        <Label fx:id="statMember" text="—" styleClass="card-value"
+                               style="-fx-font-size: 14px;"/>
+                        <Label text="Member Since" styleClass="label-muted"/>
+                    </VBox>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT">
+            <Label text="Profile  |  Smart Knee OA" styleClass="status-text"/>
+        </HBox>
+    </VBox>
+</HBox>
